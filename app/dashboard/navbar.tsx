@@ -12,12 +12,20 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
-import { User } from 'lucide-react';
+import { UserIcon } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Form from 'next/form';
 import logoutAction from '../(auth)/(logout)/logoutAction';
+import PaymentButton from '@/components/payment-button';
+import type { User } from '@/lib/user';
 
-export default function Navbar({ userName }: { userName: string }) {
+export default function Navbar({
+  user,
+  subscription,
+}: {
+  user: User;
+  subscription: any;
+}) {
   const pathname = usePathname();
 
   return (
@@ -29,6 +37,10 @@ export default function Navbar({ userName }: { userName: string }) {
           </Link>
         </div>
         <nav className="flex items-center space-x-4">
+          {!subscription && (
+            <PaymentButton isLoggedIn={true}>Assine Agora</PaymentButton>
+          )}
+
           <Link href="/dashboard" className="text-gray-700 hover:text-gray-900">
             <Button
               variant={'link'}
@@ -54,12 +66,12 @@ export default function Navbar({ userName }: { userName: string }) {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="text-gray-700 hover:text-gray-900">
-                <User size={24} />
+                <UserIcon size={24} />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="mr-4">
               <DropdownMenuLabel className="font-light uppercase text-xs">
-                {userName}
+                {user.name}
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>

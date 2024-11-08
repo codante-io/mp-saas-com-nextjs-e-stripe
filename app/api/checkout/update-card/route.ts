@@ -7,19 +7,15 @@ export async function POST(request: Request) {
   try {
     const session = await stripe.checkout.sessions.create({
       ui_mode: 'embedded',
-      line_items: [
-        {
-          // this is the product price id from stripe
-          price: process.env.PRO_PRICE_ID,
-          quantity: 1,
-        },
-      ],
-
+      mode: 'setup',
       payment_method_types: ['card'],
-      mode: 'subscription',
+      success_url: `${request.headers.get(
+        'origin'
+      )}/payment-confirmation?session_id={CHECKOUT_SESSION_ID}`
       return_url: `${request.headers.get(
         'origin'
       )}/payment-confirmation?session_id={CHECKOUT_SESSION_ID}`,
+      oat,
     });
     return NextResponse.json({
       id: session.id,

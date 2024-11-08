@@ -1,4 +1,7 @@
+import { auth } from '@/auth';
+import { fetchSubscriptionByEmail } from '@/lib/stripe';
 import { Check } from 'lucide-react';
+import PaymentButton from './payment-button';
 import {
   Card,
   CardContent,
@@ -7,9 +10,17 @@ import {
   CardHeader,
   CardTitle,
 } from './ui/card';
-import { Button } from './ui/button';
 
-export default function PricingCard() {
+export default async function PricingCard() {
+  const session = await auth();
+
+  let subscription = null;
+
+  if (session) {
+    const email = session?.user?.email;
+    subscription = await fetchSubscriptionByEmail(email ?? '');
+  }
+
   return (
     <Card className="w-[350px] text-left md:mt-20 mt-10">
       <CardHeader>
@@ -45,7 +56,11 @@ export default function PricingCard() {
         </ul>
       </CardContent>
       <CardFooter>
-        <Button className="w-full">Assine Agora</Button>
+        {!subscription && (
+          <PaymentButton isLoggedIn={!!session} className="w-full">
+            Assine Agora
+          </PaymentButton>
+        )}
       </CardFooter>
     </Card>
   );

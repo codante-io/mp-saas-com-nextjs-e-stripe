@@ -15,10 +15,18 @@ import Link from 'next/link';
 import logo from './assets/logo.svg';
 import womanImg from './assets/woman.svg';
 import { auth } from '@/auth';
+import PaymentButton from '@/components/payment-button';
+import { fetchSubscriptionByEmail } from '@/lib/stripe';
 
 export default async function Home() {
   const session = await auth();
-  const userName = session?.user?.name ?? '';
+
+  let subscription = null;
+
+  if (session) {
+    const email = session?.user?.email;
+    subscription = await fetchSubscriptionByEmail(email ?? '');
+  }
 
   return (
     <main>
@@ -134,10 +142,18 @@ export default async function Home() {
           Faça como milhares de outras pessoas. Assine nosso produto e tenha
           garantido seus estudos{' '}
         </p>
-        <Button className="mt-14 w-96">Assine Agora</Button>
-        <p className="text-xs text-muted-foreground mt-2">
-          Comece sua assinatura agora mesmo. Cancele quando quiser.{' '}
-        </p>
+
+        {!subscription && (
+          <>
+            <PaymentButton className="mt-10 w-80" isLoggedIn={!!session}>
+              Assine Agora
+            </PaymentButton>
+            <p className="text-xs text-muted-foreground mt-2">
+              Comece sua assinatura agora mesmo. Cancele quando quiser.{' '}
+            </p>
+          </>
+        )}
+
         <footer className="mt-16 border-t border-gray-300 pt-10">
           <Image src={logo} alt="Logotipo" className="mx-auto" />
           <p className="text-muted-foreground">
