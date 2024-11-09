@@ -17,7 +17,6 @@ import { cn } from '@/lib/utils';
 import { loadStripe } from '@stripe/stripe-js';
 import Link from 'next/link';
 import { useCallback } from 'react';
-import toast from 'react-hot-toast';
 
 type PaymentButtonProps = {
   children: React.ReactNode;
